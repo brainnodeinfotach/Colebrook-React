@@ -4,7 +4,7 @@ import Footer from './Footer'
 import Header from './Header'
 import CommonService from "../services/commonService";
 import urlConstant from "../constants/urlConstant";
-import { ToasterSuccess, ToasterError } from "../common/toaster";
+import { ToasterSuccess, ToasterError , ToasterWarning } from "../common/toaster";
 import { ToastContainer } from "react-toastify";
 
 function Register() {
@@ -18,31 +18,37 @@ function Register() {
   function SubmitData(e){
     e.preventDefault();
     
-    
+    if(!name || !email_or_phone || !password)
+    {
+        ToasterWarning('Please Enter Details')
+        return
+    }
+
     const UserData = {
       name: name,
       email_or_phone: email_or_phone,
       password: password,
-    //   register_by: register_by,
     };
-    try {
-      const UserRagister = `${urlConstant.User.UserRegister}`;
-      common.httpPost(UserRagister, UserData).then(()=>{
-        SetEmail_or_phone("");
-        SetName("");
-        SetPassword("");
-        // SetRegister_by("");
-      })
-    } catch (error) {
-      console.log(error);
-    }
-  
+    
+    const UserRagister = `${urlConstant.User.UserRegister}`;
+    common.httpPost(UserRagister, UserData).then(()=>{
+      ToasterSuccess("Register Successfully");
+      SetEmail_or_phone("");
+      SetName("");
+      SetPassword("");
+    })  
+    .catch((error) => {
+        console.log(error);
+        ToasterError("Not Valid Details");
+    });
   }
 
 
   return (
     <div>
+        
         <Header/>
+        <ToastContainer />
 
         <main className="main pages">
         <div className="page-header breadcrumb-wrap">
@@ -67,7 +73,7 @@ function Register() {
                         </div>
                         <form method="post">
                             <div className="form-group">
-                            <input type="text" required name="Name" placeholder="Name" value={name} onChange={(e) => {SetName(e.target.value)}} />
+                            <input type="text" required name="Name" placeholder="Name" value={name} onChange={(e) => {SetName(e.target.value)}}/>
                             </div>
                             <div className="form-group">
                             <input type="text" required name="email" placeholder="Email" value={email_or_phone} onChange={(e) => {SetEmail_or_phone(e.target.value)}} />
@@ -76,7 +82,7 @@ function Register() {
                             <input required type="password" name="password" placeholder="Password" value={password} onChange={(e) => {SetPassword(e.target.value)}} />
                             </div>
                             <div className="form-group">    
-                            <input required type="password" name="password" placeholder="Confirm password" />
+                            <input required type="password" name="password" placeholder="Confirm password"  value={password} onChange={(e) => {SetPassword(e.target.value)}}  />
                             </div>
                             <div className="login_footer form-group">
                             {/* <div className="chek-form">

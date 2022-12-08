@@ -6,32 +6,46 @@ import { ToasterSuccess, ToasterError } from "../common/toaster";
 import urlConstant from "../constants/urlConstant";
 import { useNavigate, Link } from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
+import axios from 'axios'
 function Login() {
 
     const navigate = useNavigate()
     const [email, SetEmail] = useState();
     const [password, SetPassword] = useState("");
 
+
+
+    const userId = localStorage.getItem('user')
+    useEffect(() => {
+        if (userId) {
+            navigate('/')
+        }
+    }, [])
+
+
     let common = new CommonService();
     const SubmitHandler = async (e) => {
-
         e.preventDefault();
         const data = { email, password };
         const LoginData = `${urlConstant.User.UserLogin}`;
-        await common.httpPost(LoginData, data).then(function (res) {
+        await common.httpPost(LoginData, data).then((res) => {
             if (res) {
-                ToasterSuccess("Done");
-
+                ToasterSuccess("Login Successfully");
                 localStorage.setItem('access_token', res.data.access_token)
                 localStorage.setItem('user', res.data.user.name)
                 localStorage.setItem('type', res.data.user.type)
-                navigate('/')
+
             } else {
-                alert('')
-                ToasterSuccess("Not valid");
+                ToasterError("Not Valid Details");
             }
         })
+        .catch((error) => {
+            console.log(error);
+            ToasterError("Not Valid Details");
+        });
+
     }
+
 
     return (
         <div>

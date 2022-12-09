@@ -18,6 +18,7 @@ function Register() {
   function SubmitData(e){
     e.preventDefault();
     
+    
     if(!name || !email_or_phone || !password)
     {
         ToasterWarning('Please Enter Details')
